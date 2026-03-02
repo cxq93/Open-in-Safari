@@ -11,37 +11,21 @@
 
 ---
 
-### **第二阶段：准备本地宿主环境**
+### **第二阶段：本地宿主环境配置（一键自动安装）**
 
-1. **保存 Python 脚本**：
-   将 `open_safari_host.py` 移动到一个永久存放的目录，例如：`path/open_safari_host.py`。
-2. **赋予执行权限**：
-   打开终端（Terminal），执行以下命令（请替换为你的实际路径）：
-   ```bash
-   chmod +x path/open_safari_host.py
-   ```
-3. **确认 Python 路径**：
-   在终端输入 `which python3`，确认输出路径。如果输出不是 `/usr/bin/python3`，请修改脚本首行的 Shebang。
+我们提供了一个自动化的安装脚本，可以帮你省去修改和拷贝配置文件的繁琐步骤。
 
----
+1. **保存宿主文件夹**：
+   将下载好的包含了 `open_safari_host.py` 和 `install.command` 等文件的文件夹移动到一个永久存放的目录（例如你的“文档”或“应用程序”等文件夹下）。
+   *注意：安装完成后不要移动或删除此文件夹，里面包含着运行该扩展所需的本地组件。*
 
-### **第三阶段：配置并注册宿主清单**
+2. **运行安装脚本**：
+   双击运行目录下的 **`install.command`** 文件。
+   - 如果 macOS 提示“无法打开，因为来自未知的开发者”，请右键该文件并选择“打开”。
+   - 终端窗口将会弹出，并引导你输入第一阶段记录的 **扩展 ID**。
+   - 脚本会自动为你配置路径并将所需的文件部署到支持的基于 Chromium 内核的各大浏览器（包括 Edge, Chrome, Arc, Brave, Vivaldi 等）。
 
-1. **编辑 JSON 配置文件**：
-   打开 `com.tabbit.open_in_safari.json`，修改以下两个核心字段：
-   - `"path"`: 必须填写 `open_safari_host.py` 的**绝对路径**（严禁使用 `~` 缩写）。
-   - `"allowed_origins"`: 将其中的 ID 替换为你第一阶段记录的 **扩展 ID**。格式为 `chrome-extension://你的ID/`。
-
-2. **放置配置文件**：
-   将修改好的 `com.tabbit.open_in_safari.json` 文件移动到以下系统目录：
-   
-   - **Microsoft Edge 路径**：
-     `~/Library/Application Support/Microsoft Edge/NativeMessagingHosts/`
-   
-   - **Google Chrome 路径**：
-     `~/Library/Application Support/Google/Chrome/NativeMessagingHosts/`
-
-   *注：如果对应的文件夹不存在，请手动创建它们。*
+当你看到终端提示 “🎉 安装完成！” 时，即可关闭终端窗口。
 
 ---
 

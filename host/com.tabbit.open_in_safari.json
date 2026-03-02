@@ -1,9 +1,9 @@
 {
     "name": "com.tabbit.open_in_safari",
     "description": "Open in Safari Native Host",
-    "path": "path/open_safari_host.py",
+    "path": "/Volumes/GETEA-M9/GitHub/Open-in-Safari/host/open_safari_host.py",
     "type": "stdio",
     "allowed_origins": [
-        "chrome-extension://<ID>/"
+        "chrome-extension://abcdefghijklmnopqrstuvwxyz123456/"
     ]
 }

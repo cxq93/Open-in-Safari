@@ -3,14 +3,30 @@ import sys
 import json
 import struct
 import subprocess
+import re
+
+# 读取固定长度字节的辅助函数，防止读取不完整
+def read_bytes(count):
+    bytes_read = 0
+    buffer = b''
+    while bytes_read < count:
+        chunk = sys.stdin.buffer.read(count - bytes_read)
+        if not chunk:
+            break
+        buffer += chunk
+        bytes_read += len(chunk)
+    return buffer
 
 # 读取来自浏览器扩展的消息
 def get_message():
-    raw_length = sys.stdin.buffer.read(4)
-    if len(raw_length) == 0:
+    raw_length = read_bytes(4)
+    if len(raw_length) != 4:
         sys.exit(0)
     message_length = struct.unpack('@I', raw_length)[0]
-    message = sys.stdin.buffer.read(message_length).decode('utf-8')
+    message_data = read_bytes(message_length)
+    if len(message_data) != message_length:
+        sys.exit(0)
+    message = message_data.decode('utf-8')
     return json.loads(message)
 
 # 向浏览器扩展发送响应
@@ -24,9 +40,13 @@ if __name__ == '__main__':
     try:
         msg = get_message()
         url = msg.get('url')
-        if url:
+        
+        # 严谨验证 URL 是否为标准的 http/https
+        if url and re.match(r'^https?://[^\s/$.?#].[^\s]*$', url, re.IGNORECASE):
             # 执行 macOS 命令在 Safari 中打开 URL
             subprocess.run(["open", "-a", "Safari", url])
             send_message({"status": "success", "url": url})
+        else:
+            send_message({"status": "error", "error": "Invalid or unsafe URL protocol"})
     except Exception as e:
         send_message({"status": "error", "error": str(e)})
