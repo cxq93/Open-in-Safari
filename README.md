@@ -53,4 +53,4 @@
    - **报错 "Native host not found"**：检查 JSON 文件名是否与 `background.js` 中调用的名称一致，检查 JSON 是否放在了正确的 `NativeMessagingHosts` 文件夹下。
    - **点击无反应**：检查 JSON 里的 `path` 是否为绝对路径，且 Python 脚本是否有执行权限。
    - **权限错误**：检查 JSON 里的 `allowed_origins` 是否准确包含了当前的扩展 ID。
-```
+   
