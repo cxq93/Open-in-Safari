@@ -14,7 +14,7 @@
 ### **第二阶段：准备本地宿主环境**
 
 1. **保存 Python 脚本**：
-   将 `open_safari_host.py` 移动到一个永久存放的目录，例如：`/Users/你的用户名/scripts/open_safari_host.py`。
+   将 `open_safari_host.py` 移动到一个永久存放的目录，例如：`path/open_safari_host.py`。
 2. **赋予执行权限**：
    打开终端（Terminal），执行以下命令（请替换为你的实际路径）：
    ```bash
