@@ -18,7 +18,7 @@
 2. **赋予执行权限**：
    打开终端（Terminal），执行以下命令（请替换为你的实际路径）：
    ```bash
-   chmod +x /Users/你的用户名/scripts/open_safari_host.py
+   chmod +x path/open_safari_host.py
    ```
 3. **确认 Python 路径**：
    在终端输入 `which python3`，确认输出路径。如果输出不是 `/usr/bin/python3`，请修改脚本首行的 Shebang。
