@@ -35,6 +35,7 @@
 2. 如果 Safari 成功弹出并加载当前页面，则部署成功。
 3. **常见问题排查**：
    - **报错 "Native host not found"**：检查 JSON 文件名是否与 `background.js` 中调用的名称一致，检查 JSON 是否放在了正确的 `NativeMessagingHosts` 文件夹下。
-   - **点击无反应**：检查 JSON 里的 `path` 是否为绝对路径，且 Python 脚本是否有执行权限。
+   - **报错 "Native host has exited"**：通常是本地主机启动后异常退出。请按顺序检查：`open_safari_host.py` 仍在原路径、脚本有执行权限、重新运行一次 `install.command` 写回最新 `path` 与 `allowed_origins`，然后在扩展管理页点击“重新加载”扩展再测试。
+   - **点击无反应**：检查 JSON 里的 `path` 是否为绝对路径，且 Python 脚本是否有执行权限；如果你重新“加载解压后的扩展”导致扩展 ID 变化，也必须重新运行 `install.command`。
    - **权限错误**：检查 JSON 里的 `allowed_origins` 是否准确包含了当前的扩展 ID。
    
