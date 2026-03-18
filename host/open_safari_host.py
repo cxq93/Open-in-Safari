@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 import sys
 import json
 import struct
@@ -22,7 +22,7 @@ def get_message():
     raw_length = read_bytes(4)
     if len(raw_length) != 4:
         sys.exit(0)
-    message_length = struct.unpack('@I', raw_length)[0]
+    message_length = struct.unpack('=I', raw_length)[0]
     message_data = read_bytes(message_length)
     if len(message_data) != message_length:
         sys.exit(0)
@@ -32,7 +32,7 @@ def get_message():
 # 向浏览器扩展发送响应
 def send_message(message_content):
     content = json.dumps(message_content).encode('utf-8')
-    sys.stdout.buffer.write(struct.pack('@I', len(content)))
+    sys.stdout.buffer.write(struct.pack('=I', len(content)))
     sys.stdout.buffer.write(content)
     sys.stdout.buffer.flush()
 
@@ -40,11 +40,14 @@ if __name__ == '__main__':
     try:
         msg = get_message()
         url = msg.get('url')
-        
-        # 严谨验证 URL 是否为标准的 http/https
+
         if url and re.match(r'^https?://[^\s/$.?#].[^\s]*$', url, re.IGNORECASE):
-            # 执行 macOS 命令在 Safari 中打开 URL
-            subprocess.run(["open", "-a", "Safari", url])
+            subprocess.run(
+                ["/usr/bin/open", "-a", "Safari", url],
+                check=False,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL
+            )
             send_message({"status": "success", "url": url})
         else:
             send_message({"status": "error", "error": "Invalid or unsafe URL protocol"})

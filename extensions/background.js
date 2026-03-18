@@ -8,7 +8,7 @@ chrome.runtime.onInstalled.addListener(() => {
 });
 
 // 处理右键菜单点击事件
-chrome.contextMenus.onClicked.addListener((info, tab) => {
+chrome.contextMenus.onClicked.addListener((info) => {
   if (info.menuItemId === "openInSafariContextMenu") {
     // 如果是链接，则打开链接URL，否则打开当前页面URL
     const urlToOpen = info.linkUrl || info.pageUrl;
@@ -25,28 +25,49 @@ chrome.action.onClicked.addListener((tab) => {
   }
 });
 
-// 核心发送逻辑
+function showErrorState(message) {
+  chrome.action.setBadgeText({ text: 'ERR' });
+  chrome.action.setBadgeBackgroundColor({ color: '#FF0000' });
+  chrome.action.setTitle({
+    title: `打开失败\n扩展ID: ${chrome.runtime.id}\n${message}`
+  });
+}
+
+function showSuccessState() {
+  chrome.action.setBadgeText({ text: 'OK' });
+  chrome.action.setBadgeBackgroundColor({ color: '#0B8043' });
+  chrome.action.setTitle({ title: "在 Safari 中打开（最近一次成功）" });
+  setTimeout(() => chrome.action.setBadgeText({ text: '' }), 1200);
+}
+
 function sendToSafari(url) {
-  if (url && url.startsWith('http')) {
-    console.log("正在尝试发送 URL 到 Safari:", url);
-    // 重置badge
-    chrome.action.setBadgeText({ text: '' });
-    
-    chrome.runtime.sendNativeMessage(
-      'com.tabbit.open_in_safari',
-      { url: url },
-      (response) => {
-        if (chrome.runtime.lastError) {
-          // 错误会显示在扩展程序的“查看视图：Service Worker”控制台中
-          const errMsg = chrome.runtime.lastError.message;
-          console.error("Native Messaging 错误:", errMsg);
-          // 在图标上显示错误提示
-          chrome.action.setBadgeText({ text: 'ERR' });
-          chrome.action.setBadgeBackgroundColor({ color: '#FF0000' });
-        } else {
-          console.log("Safari 响应成功:", response);
-        }
-      }
-    );
+  if (!url || !url.startsWith('http')) {
+    chrome.action.setBadgeText({ text: 'NO' });
+    chrome.action.setBadgeBackgroundColor({ color: '#888888' });
+    chrome.action.setTitle({ title: "仅支持 http/https 链接" });
+    return;
   }
+
+  chrome.action.setBadgeText({ text: '' });
+  chrome.action.setTitle({ title: "正在通过 Native Messaging 调用 Safari..." });
+  chrome.runtime.sendNativeMessage(
+    'com.tabbit.open_in_safari',
+    { url: url },
+    (response) => {
+      if (chrome.runtime.lastError) {
+        const errMsg = chrome.runtime.lastError.message;
+        console.error("Native Messaging 错误:", errMsg, "当前扩展 ID:", chrome.runtime.id, "主机名:", "com.tabbit.open_in_safari");
+        showErrorState(errMsg);
+        return;
+      }
+
+      if (!response || response.status !== "success") {
+        console.error("Safari 响应异常:", response);
+        showErrorState("本地脚本返回异常响应");
+        return;
+      }
+
+      showSuccessState();
+    }
+  );
 }
